@@ -20,31 +20,31 @@
               url = "mirror://sourceforge/vice-emu/vice-${version}.tar.gz";
               sha256 = "sha256-Zb/lXM5ifbm1oKx4dqkMCH6f6G6fVRfoCURsQGSi0/0=";
             };
-            patches = [ "./vice-sdl2_image-fix.diff" ];
+            patches = "${self}/vice-sdl2_image-fix.diff";
             dontDisableStatic = true;
             configureFlags = [ "--enable-fullscreen" "--enable-sdl2ui" "--disable-pdf-docs" ];
 
-            # desktopItem = makeDesktopItem {
-            #   name = "vice";
-            #   exec = "x64";
-            #   comment = "Commodore 64 emulator";
-            #   desktopName = "VICE";
-            #   genericName = "Commodore 64 emulator";
-            #   categories = "Emulator;";
-            # };
+            desktopItem = pkgs.makeDesktopItem {
+               name = "vice";
+               exec = "x64";
+               comment = "Commodore 64 emulator";
+               desktopName = "VICE";
+               genericName = "Commodore 64 emulator";
+               categories = "Emulator;";
+            };
 
             preBuild = ''
-            for i in src/resid src/resid-dtv
-            do
-               mkdir -pv $i/src
-               ln -sv ../../wrap-u-ar.sh $i/src
-            done
-          '';
+              for i in src/resid src/resid-dtv
+              do
+                 mkdir -pv $i/src
+                 ln -sv ../../wrap-u-ar.sh $i/src
+              done
+            '';
 
-            # postInstall = ''
-            #   mkdir -p $out/share/applications
-            #   cp ${desktopItem}/share/applications/* $out/share/applications
-            # '';
+            postInstall = ''
+              mkdir -p $out/share/applications
+              cp ${desktopItem}/share/applications/* $out/share/applications
+            '';
 
             nativeBuildInputs = with pkgs; [
               autoreconfHook
