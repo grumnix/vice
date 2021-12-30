@@ -16,13 +16,24 @@
           vice = pkgs.stdenv.mkDerivation rec {
             pname = "vice";
             version = "3.6";
-            src = pkgs.fetchurl {
-              url = "mirror://sourceforge/vice-emu/vice-${version}.tar.gz";
-              sha256 = "sha256-Zb/lXM5ifbm1oKx4dqkMCH6f6G6fVRfoCURsQGSi0/0=";
+            # src = pkgs.fetchurl {
+            #   url = "mirror://sourceforge/vice-emu/vice-${version}.tar.gz";
+            #   sha256 = "sha256-Zb/lXM5ifbm1oKx4dqkMCH6f6G6fVRfoCURsQGSi0/0=";
+            # };
+            # patches = "${self}/vice-sdl2_image-fix.diff";
+            src = pkgs.fetchsvn {
+              url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
+              rev = "41441";
+              sha256 = "sha256-SNgeyBm5rpiS/CFabKFoh51truWIhS/FcKkM5P0xiUw=";
             };
-            patches = "${self}/vice-sdl2_image-fix.diff";
             dontDisableStatic = true;
-            configureFlags = [ "--enable-fullscreen" "--enable-sdl2ui" "--disable-pdf-docs" ];
+            preConfigure = "./autogen.sh";
+            configureFlags = [
+              "--enable-x64"  # old faster x64 emulator
+              "--enable-fullscreen"
+              "--enable-sdl2ui"
+              "--disable-pdf-docs"
+            ];
 
             desktopItem = pkgs.makeDesktopItem {
                name = "vice";
