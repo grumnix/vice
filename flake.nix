@@ -13,36 +13,19 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
         packages = flake-utils.lib.flattenTree rec {
-          vice = pkgs.stdenv.mkDerivation rec {
-            pname = "vice";
+          vice-base = rec {
             version = "3.6";
-            # src = pkgs.fetchurl {
-            #   url = "mirror://sourceforge/vice-emu/vice-${version}.tar.gz";
-            #   sha256 = "sha256-Zb/lXM5ifbm1oKx4dqkMCH6f6G6fVRfoCURsQGSi0/0=";
-            # };
-            # patches = "${self}/vice-sdl2_image-fix.diff";
             src = pkgs.fetchsvn {
               url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
-              rev = "41441";
-              sha256 = "sha256-SNgeyBm5rpiS/CFabKFoh51truWIhS/FcKkM5P0xiUw=";
+              rev = "41473";
+              sha256 = "sha256-rMBXBA0ZzxC6Evlf2hZk+wLn5PzIOd7tLMm/uEbGzxU=";
             };
-            dontDisableStatic = true;
-            preConfigure = "./autogen.sh";
+            enableParallelBuilding = true;
+            # dontDisableStatic = true;  # FIXME: is this necessary?!
             configureFlags = [
               "--enable-x64"  # old faster x64 emulator
-              "--enable-fullscreen"
-              "--enable-sdl2ui"
               "--disable-pdf-docs"
             ];
-
-            desktopItem = pkgs.makeDesktopItem {
-               name = "vice";
-               exec = "x64";
-               comment = "Commodore 64 emulator";
-               desktopName = "VICE";
-               genericName = "Commodore 64 emulator";
-               categories = "Emulator;";
-            };
 
             preBuild = ''
               for i in src/resid src/resid-dtv
@@ -52,11 +35,6 @@
               done
             '';
 
-            postInstall = ''
-              mkdir -p $out/share/applications
-              cp ${desktopItem}/share/applications/* $out/share/applications
-            '';
-
             nativeBuildInputs = with pkgs; [
               autoreconfHook
               bison
@@ -64,27 +42,77 @@
               file
               flex
               pkg-config
+              perl
             ];
 
             buildInputs = with pkgs; [
               alsa-lib
               giflib
-              gtk2
               libGL
               libGLU
-              # libXaw
               libjpeg
               libpng
-              perl
               readline
               pulseaudio
-              SDL2
-              SDL2_image
               xa
             ];
           };
+
+          vice-gtk3 = pkgs.stdenv.mkDerivation (vice-base // rec {
+            pname = "vice-gtk3";
+            configureFlags = vice-base.configureFlags ++ [
+              "--enable-native-gtk3ui"
+              "--enable-desktop-files"
+            ];
+            preConfigure = ''
+                sed -i 's/^AC_INIT(\[vice\]/AC_INIT(\[${pname}\]/' configure.ac
+                ./autogen.sh
+            '';
+            postInstall = ''
+              for i in $out/bin/*; do
+                mv -v "$i" "$i.gtk3"
+              done
+            '';
+            nativeBuildInputs = vice-base.nativeBuildInputs ++ [
+              pkgs.xdg-utils
+            ];
+            buildInputs = vice-base.buildInputs ++ [
+              pkgs.gtk3
+              pkgs.glew
+            ];
+          });
+
+          vice-sdl2 = pkgs.stdenv.mkDerivation (vice-base // rec {
+            pname = "vice-sdl2";
+            configureFlags = vice-base.configureFlags ++ [
+              "--enable-sdl2ui"
+            ];
+            desktopItem = pkgs.makeDesktopItem {
+               name = "vice";
+               exec = "x64";
+               comment = "Commodore 64 emulator";
+               desktopName = "VICE";
+               genericName = "Commodore 64 emulator";
+               categories = "Emulator;";
+            };
+            preConfigure = ''
+                sed -i 's/^AC_INIT(\[vice\]/AC_INIT(\[${pname}\]/' configure.ac
+                ./autogen.sh
+            '';
+            postInstall = ''
+              for i in $out/bin/*; do
+                mv -v "$i" "$i.sdl2"
+              done
+              mkdir -p $out/share/applications
+              cp ${desktopItem}/share/applications/* $out/share/applications
+            '';
+            buildInputs = vice-base.buildInputs ++ [
+              pkgs.SDL2
+              pkgs.SDL2_image
+            ];
+          });
         };
-        defaultPackage = packages.vice;
+        defaultPackage = packages.vice-gtk3;
       }
     );
 }
