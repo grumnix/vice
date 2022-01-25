@@ -71,6 +71,7 @@
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.gtk3"
+                ln -s "$i.gtk3" "$i"
               done
             '';
             nativeBuildInputs = vice-base.nativeBuildInputs ++ [
@@ -102,6 +103,7 @@
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.sdl2"
+                ln -s "$i.sdl2" "$i"
               done
               mkdir -p $out/share/applications
               cp ${desktopItem}/share/applications/* $out/share/applications
