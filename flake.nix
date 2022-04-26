@@ -69,7 +69,8 @@
               "--enable-desktop-files"
             ];
             preConfigure = ''
-                sed -i 's/^AC_INIT(\[vice\]/AC_INIT(\[${pname}\]/' configure.ac
+                substituteInPlace configure.ac \
+                   --replace "AC_INIT([vice]" "AC_INIT([${pname}]"
                 ./autogen.sh
             '';
             postInstall = ''
@@ -101,7 +102,8 @@
                categories = "Emulator;";
             };
             preConfigure = ''
-                sed -i 's/^AC_INIT(\[vice\]/AC_INIT(\[${pname}\]/' configure.ac
+                substituteInPlace configure.ac \
+                   --replace "AC_INIT([vice]" "AC_INIT([${pname}]"
                 ./autogen.sh
             '';
             postInstall = ''
