@@ -21,6 +21,11 @@
             };
             enableParallelBuilding = true;
             # dontDisableStatic = true;  # FIXME: is this necessary?!
+
+            postPatch = ''
+              patchShebangs ./src/arch/gtk3/novte/box_drawing_generate.sh
+            '';
+
             configureFlags = [
               "--enable-x64"  # old faster x64 emulator
               "--disable-pdf-docs"
