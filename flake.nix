@@ -2,7 +2,7 @@
   description = "Commodore 64, 128 and other emulators";
 
   inputs = rec {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -99,7 +99,7 @@
                comment = "Commodore 64 emulator";
                desktopName = "VICE";
                genericName = "Commodore 64 emulator";
-               categories = "Emulator;";
+               categories = [ "Emulator" ];
             };
             preConfigure = ''
                 substituteInPlace configure.ac \
