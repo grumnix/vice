@@ -10,8 +10,10 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
+      in {
         packages = flake-utils.lib.flattenTree rec {
+          default = vice-sdl2;
+
           vice-base = rec {
             version = "3.6";
             src = pkgs.fetchsvn {
@@ -68,20 +70,24 @@
               "--enable-native-gtk3ui"
               "--enable-desktop-files"
             ];
+
             preConfigure = ''
                 substituteInPlace configure.ac \
                    --replace "AC_INIT([vice]" "AC_INIT([${pname}]"
                 ./autogen.sh
             '';
+
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.gtk3"
                 ln -s "$i.gtk3" "$i"
               done
             '';
+
             nativeBuildInputs = vice-base.nativeBuildInputs ++ [
               pkgs.xdg-utils
             ];
+
             buildInputs = vice-base.buildInputs ++ [
               pkgs.gtk3
               pkgs.glew
@@ -90,9 +96,11 @@
 
           vice-sdl2 = pkgs.stdenv.mkDerivation (vice-base // rec {
             pname = "vice-sdl2";
+
             configureFlags = vice-base.configureFlags ++ [
               "--enable-sdl2ui"
             ];
+
             desktopItem = pkgs.makeDesktopItem {
                name = "vice";
                exec = "x64";
@@ -101,11 +109,13 @@
                genericName = "Commodore 64 emulator";
                categories = [ "Emulator" ];
             };
+
             preConfigure = ''
-                substituteInPlace configure.ac \
-                   --replace "AC_INIT([vice]" "AC_INIT([${pname}]"
-                ./autogen.sh
+              substituteInPlace configure.ac \
+                 --replace "AC_INIT([vice]" "AC_INIT([${pname}]"
+              ./autogen.sh
             '';
+
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.sdl2"
@@ -114,13 +124,13 @@
               mkdir -p $out/share/applications
               cp ${desktopItem}/share/applications/* $out/share/applications
             '';
+
             buildInputs = vice-base.buildInputs ++ [
               pkgs.SDL2
               pkgs.SDL2_image
             ];
           });
         };
-        defaultPackage = packages.vice-gtk3;
       }
     );
 }
