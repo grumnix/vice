@@ -11,7 +11,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in {
-        packages = flake-utils.lib.flattenTree rec {
+        packages = rec {
           default = vice-sdl2;
 
           vice-base = rec {
