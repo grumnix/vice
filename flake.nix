@@ -10,30 +10,27 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        packages = rec {
-          default = vice-sdl2;
 
-          vice-base = rec {
-            version = "3.6";
-            src = pkgs.fetchsvn {
-              url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
-              rev = "41473";
-              sha256 = "sha256-rMBXBA0ZzxC6Evlf2hZk+wLn5PzIOd7tLMm/uEbGzxU=";
-            };
-            enableParallelBuilding = true;
-            # dontDisableStatic = true;  # FIXME: is this necessary?!
+        vice-base = rec {
+          version = "3.6";
+          src = pkgs.fetchsvn {
+            url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
+            rev = "41473";
+            sha256 = "sha256-rMBXBA0ZzxC6Evlf2hZk+wLn5PzIOd7tLMm/uEbGzxU=";
+          };
+          enableParallelBuilding = true;
+          # dontDisableStatic = true;  # FIXME: is this necessary?!
 
-            postPatch = ''
+          postPatch = ''
               patchShebangs ./src/arch/gtk3/novte/box_drawing_generate.sh
             '';
 
-            configureFlags = [
-              "--enable-x64"  # old faster x64 emulator
-              "--disable-pdf-docs"
-            ];
+          configureFlags = [
+            "--enable-x64"  # old faster x64 emulator
+            "--disable-pdf-docs"
+          ];
 
-            preBuild = ''
+          preBuild = ''
               for i in src/resid src/resid-dtv
               do
                  mkdir -pv $i/src
@@ -41,28 +38,31 @@
               done
             '';
 
-            nativeBuildInputs = with pkgs; [
-              autoreconfHook
-              bison
-              dos2unix
-              file
-              flex
-              pkg-config
-              perl
-            ];
+          nativeBuildInputs = with pkgs; [
+            autoreconfHook
+            bison
+            dos2unix
+            file
+            flex
+            pkg-config
+            perl
+          ];
 
-            buildInputs = with pkgs; [
-              alsa-lib
-              giflib
-              libGL
-              libGLU
-              libjpeg
-              libpng
-              readline
-              pulseaudio
-              xa
-            ];
-          };
+          buildInputs = with pkgs; [
+            alsa-lib
+            giflib
+            libGL
+            libGLU
+            libjpeg
+            libpng
+            readline
+            pulseaudio
+            xa
+          ];
+        };
+      in {
+        packages = rec {
+          default = vice-sdl2;
 
           vice-gtk3 = pkgs.stdenv.mkDerivation (vice-base // rec {
             pname = "vice-gtk3";
