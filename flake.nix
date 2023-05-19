@@ -80,7 +80,6 @@
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.gtk3"
-                ln -s "$i.gtk3" "$i"
               done
             '';
 
@@ -119,7 +118,6 @@
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.sdl2"
-                ln -s "$i.sdl2" "$i"
               done
               mkdir -p $out/share/applications
               cp ${desktopItem}/share/applications/* $out/share/applications
@@ -130,6 +128,20 @@
               pkgs.SDL2_image
             ];
           });
+
+          vice-sdl2-as-default = pkgs.runCommand "vice-sdl2-as-defautl" {} ''
+            mkdir -p $out/bin
+            for i in ${vice-sdl2}/bin/*; do
+              ln -sv "$i" "$out/bin/$(basename ''${i%.sdl2})"
+            done
+          '';
+
+          vice-gtk3-as-default = pkgs.runCommand "vice-gtk3-as-default" {} ''
+            mkdir -p $out/bin
+            for i in ${vice-gtk3}/bin/*; do
+              ln -sv "$i" "$out/bin/$(basename ''${i%.gtk3})"
+            done
+          '';
         };
       }
     );
