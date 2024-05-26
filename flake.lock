@@ -37,7 +37,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "vice_src": "vice_src"
       }
     },
     "systems": {
@@ -53,6 +54,19 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "vice_src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1703439768,
+        "narHash": "sha256-r0T4+wYuIUdYlCpwBCzNO+47MaTmlArOlhwpD5/7oDc=",
+        "type": "tarball",
+        "url": "https://unlimited.dl.sourceforge.net/project/vice-emu/releases/vice-3.8.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://unlimited.dl.sourceforge.net/project/vice-emu/releases/vice-3.8.tar.gz"
       }
     }
   },

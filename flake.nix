@@ -4,20 +4,20 @@
   inputs = rec {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
+
+    vice_src.url = "https://unlimited.dl.sourceforge.net/project/vice-emu/releases/vice-3.8.tar.gz";
+    vice_src.flake = false;
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, vice_src }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
         vice-base = rec {
-          version = "3.6";
-          src = pkgs.fetchsvn {
-            url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
-            rev = "45169";
-            sha256 = "sha256-Fo2BmZ+RyGP9j6DTuEeO0CLAiVYKvRjWmY7BLk7YBd0=";
-          };
+          version = "3.8";
+          src = vice_src;
+
           enableParallelBuilding = true;
           # dontDisableStatic = true;  # FIXME: is this necessary?!
 
