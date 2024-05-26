@@ -2,7 +2,7 @@
   description = "Commodore 64, 128 and other emulators";
 
   inputs = rec {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
