@@ -15,8 +15,8 @@
           version = "3.6";
           src = pkgs.fetchsvn {
             url = "svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/";
-            rev = "41473";
-            sha256 = "sha256-rMBXBA0ZzxC6Evlf2hZk+wLn5PzIOd7tLMm/uEbGzxU=";
+            rev = "45169";
+            sha256 = "sha256-Fo2BmZ+RyGP9j6DTuEeO0CLAiVYKvRjWmY7BLk7YBd0=";
           };
           enableParallelBuilding = true;
           # dontDisableStatic = true;  # FIXME: is this necessary?!
@@ -58,6 +58,8 @@
             readline
             pulseaudio
             xa
+            libevdev
+            curl
           ];
         };
       in {
