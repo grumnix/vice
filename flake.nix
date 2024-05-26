@@ -77,6 +77,12 @@
                 ./autogen.sh
             '';
 
+            preBuild = ''
+              substituteInPlace src/Makefile \
+                --replace '-lGLEW -lGLU -lOpenGL' \
+                          '-lGLEW -lGLU -lOpenGL -lGLX'
+            '';
+
             postInstall = ''
               for i in $out/bin/*; do
                 mv -v "$i" "$i.gtk3"
